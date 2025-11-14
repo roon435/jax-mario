@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Mario</title>
+<title>Whitelist System</title>
+<meta charset="utf-8"/>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -22,7 +23,7 @@
         color: white;
         border-radius: 10px;
         z-index: 9999;
-        width: 300px;
+        width: 340px;
         text-align: center;
         border: 2px solid #555;
     }
@@ -40,9 +41,7 @@
         color: white;
         cursor: pointer;
     }
-    button:hover {
-        background: #3256c7;
-    }
+    button:hover { background: #3256c7; }
 
     #playMarioBtn {
         display: none;
@@ -54,172 +53,254 @@
         border-radius: 10px;
         cursor: pointer;
     }
-    #playMarioBtn:hover {
-        background: darkred;
-    }
+    #playMarioBtn:hover { background: darkred; }
 
-    .adminPlayBtn {
-        background: red !important;
-    }
+    .adminPlayBtn { background: red !important; }
+    .toggleOn { background: green !important; color: #000 !important; }
+    .toggleOff { background: #4b78ff !important; }
 
-    .toggleOn {
-        background: green !important;
-    }
-    .toggleOff {
-        background: #4b78ff !important;
-    }
+    .small { font-size: 13px; color: #ccc; margin-top: 6px; }
+    .row { margin-top: 10px; }
 </style>
 </head>
 <body>
 
-<h1 id="lockedMessage">This site is locked. You need whitelist from cam to play mario. Ask him to whitelist you for a while. Whitelisted people, please enjoy the game :). Please note i did not make this mario game jax, my friend did i repeat jax  made this game (i made whitelist with ai).</h1>
+<h1 id="lockedMessage">
+This site is locked. You need whitelist from cam to play mario. Ask him to whitelist you for a while. Whitelisted people, please enjoy the game :). Please note i did not make this mario game jax, my friend did i repeat jax made this game (i made whitelist with ai).
+</h1>
 
 <!-- USER PLAY BUTTON -->
 <button id="playMarioBtn" onclick="openProxyGame()">
-    Play Mario ( enjoy :) )
+    Play Mario
 </button>
 
 <!-- PASSWORD POPUP -->
 <div id="passwordPopup">
-    <h3>Enter Admin Password (NOT LEAKING TO ANYONE)</h3>
+    <h3>Enter Admin Password</h3>
     <input id="passwordInput" type="password" placeholder="Password">
     <br>
-    <button onclick="checkPass()">Submit</button>
+    <div class="row">
+        <button onclick="checkPass()">Submit</button>
+        <button onclick="closePasswordPopup()" style="margin-left:8px;background:#777">Cancel</button>
+    </div>
 </div>
 
 <!-- ADMIN PANEL -->
-<div id="adminPanel">
+<div id="adminPanel" role="dialog" aria-label="Admin Panel">
     <h2>Admin Panel</h2>
 
     <!-- ADMIN PLAY BUTTON -->
-    <button class="adminPlayBtn" onclick="openProxyGame()">
-        Play Mario (Admin)
-    </button>
+    <div class="row">
+        <button class="adminPlayBtn" onclick="openProxyGame()">
+            Play Mario (Admin)
+        </button>
+    </div>
 
-    <h3 style="margin-top: 20px;">Whitelist Control</h3>
+    <h3 style="margin-top: 18px;">Whitelist Control</h3>
 
-    <!-- NEW TOGGLE BUTTON -->
-    <button id="allowToggle" class="toggleOff" onclick="togglePermanent()">
-        Allow Everyone: OFF
-    </button>
+    <!-- PERMANENT TOGGLE -->
+    <div class="row">
+        <button id="allowToggle" class="toggleOff" onclick="togglePermanent()">
+            Allow Everyone: OFF
+        </button>
+    </div>
+
+    <div class="small">(Toggle ON = everyone allowed permanently until you toggle OFF)</div>
 
     <h3 style="margin-top: 15px;">Timed Access</h3>
-    <select id="presetTime">
-        <option value="5">Allow 5 minutes</option>
-        <option value="15">Allow 15 minutes</option>
-        <option value="30">Allow 30 minutes</option>
-        <option value="45">Allow 45 minutes</option>
-        <option value="60">Allow 60 minutes</option>
-    </select>
-    <button onclick="allowPreset()">Allow</button>
+    <div class="row">
+        <select id="presetTime">
+            <option value="5">Allow 5 minutes</option>
+            <option value="15">Allow 15 minutes</option>
+            <option value="30">Allow 30 minutes</option>
+            <option value="45">Allow 45 minutes</option>
+            <option value="60">Allow 60 minutes</option>
+        </select>
+        <button onclick="allowPreset()">Allow</button>
+    </div>
 
-    <h3 style="margin-top: 15px;">Custom Access</h3>
-    <input id="customMinutes" type="number" placeholder="Minutes">
-    <button onclick="allowCustom()">Allow Custom Time</button>
+    <div class="row">
+        <input id="customMinutes" type="number" placeholder="Custom minutes" style="width:150px;">
+        <button onclick="allowCustom()">Allow Custom</button>
+    </div>
 
-    <br><br>
-    <button onclick="closeAdmin()">Close</button>
+    <div class="small" id="expiresInfo"></div>
+
+    <br>
+    <div class="row">
+        <button onclick="closeAdmin()">Close</button>
+    </div>
 </div>
 
 <script>
-// PASSWORD
+// CONFIG
 const ADMIN_PASSWORD = "roongoon678";
 const GAME_URL = "https://fr-mario.vercel.app";
+const STORAGE_KEY = "whitelist_expire"; // stores either "permanent" or numeric timestamp (ms)
 
-// PROXY WINDOW FUNCTION
+// OPEN GAME IN about:blank PROXY
 function openProxyGame() {
-    let win = window.open("about:blank", "_blank");
-    win.document.write(`<iframe src="${GAME_URL}" style="border:0; width:100vw; height:100vh;"></iframe>`);
-    win.document.close();
+    try {
+        let win = window.open("about:blank", "_blank");
+        // write minimal HTML with iframe that fills the new window
+        let html = `
+            <!doctype html>
+            <html>
+            <head><title>Game</title>
+            <meta charset="utf-8"/>
+            <style>html,body{height:100%;margin:0}iframe{border:0;width:100%;height:100vh;}</style>
+            </head>
+            <body>
+            <iframe src="${GAME_URL}" allowfullscreen></iframe>
+            </body>
+            </html>
+        `;
+        win.document.open();
+        win.document.write(html);
+        win.document.close();
+    } catch (err) {
+        alert("Popup blocked. Allow popups for this site.");
+    }
 }
 
-// CHECK WHITELIST STATUS
+// WHITELIST HELPERS
 function isAllowed() {
-    let expire = localStorage.getItem("whitelist_expire");
-    if (!expire) return false;
-    return Date.now() < parseInt(expire);
+    let v = localStorage.getItem(STORAGE_KEY);
+    if (!v) return false;
+    if (v === "permanent") return true;
+    let num = parseInt(v, 10);
+    if (isNaN(num)) return false;
+    return Date.now() < num;
 }
 
-// UPDATE UI
+function getExpiry() {
+    let v = localStorage.getItem(STORAGE_KEY);
+    if (!v) return null;
+    if (v === "permanent") return "permanent";
+    let num = parseInt(v, 10);
+    if (isNaN(num)) return null;
+    return num;
+}
+
+// UPDATE UI (called on load and periodically)
 function updateLockState() {
     const lockedMessage = document.getElementById("lockedMessage");
     const playMarioBtn = document.getElementById("playMarioBtn");
     const allowToggle = document.getElementById("allowToggle");
+    const expiresInfo = document.getElementById("expiresInfo");
 
     if (isAllowed()) {
-        lockedMessage.innerText = "Site Unlocked!";
+        lockedMessage.innerText = "Site Unlocked! Enjoy Mario.";
         playMarioBtn.style.display = "inline-block";
 
         allowToggle.innerText = "Allow Everyone: ON";
         allowToggle.classList.remove("toggleOff");
         allowToggle.classList.add("toggleOn");
 
+        // show expiry info
+        let exp = getExpiry();
+        if (exp === "permanent") {
+            expiresInfo.innerText = "Access: permanent (toggle OFF to re-lock)";
+        } else if (typeof exp === "number") {
+            // remaining time in mm:ss or hours
+            let remainingMs = exp - Date.now();
+            if (remainingMs > 0) {
+                let secs = Math.floor(remainingMs / 1000);
+                let hh = Math.floor(secs / 3600);
+                let mm = Math.floor((secs % 3600) / 60);
+                let ss = secs % 60;
+                let timeStr = hh > 0 ? `${hh}h ${mm}m ${ss}s` : `${mm}m ${ss}s`;
+                expiresInfo.innerText = `Access expires in: ${timeStr}`;
+            } else {
+                expiresInfo.innerText = "Access expired (re-locking)...";
+            }
+        } else {
+            expiresInfo.innerText = "";
+        }
     } else {
-        lockedMessage.innerText = "This site is locked. You need whitelist from cam to play mario. Ask him to whitelist you for a while. Whitelisted people, please enjoy the game :). Please note i did not make this mario game jax, my friend did i repeat jax  made this game (i made whitelist with ai).";
+        // locked
+        lockedMessage.innerText = "This site is locked. You need whitelist from cam to play mario. Ask him to whitelist you for a while. Whitelisted people, please enjoy the game :). Please note i did not make this mario game jax, my friend did i repeat jax made this game (i made whitelist with ai).";
         playMarioBtn.style.display = "none";
 
         allowToggle.innerText = "Allow Everyone: OFF";
         allowToggle.classList.remove("toggleOn");
         allowToggle.classList.add("toggleOff");
+
+        document.getElementById("expiresInfo").innerText = "";
     }
 }
 
+// initial update
 updateLockState();
 
-// SHOW PASSWORD POPUP
-document.addEventListener("keydown", e => {
+// periodic check to auto-update when timer expires
+setInterval(updateLockState, 1000);
+
+// keyboard to open password popup
+document.addEventListener("keydown", function(e) {
     if (e.key === ";") {
         document.getElementById("passwordPopup").style.display = "block";
+        document.getElementById("passwordInput").value = "";
         document.getElementById("passwordInput").focus();
     }
 });
 
-// CHECK PASSWORD
+// password popup helpers
+function closePasswordPopup() {
+    document.getElementById("passwordPopup").style.display = "none";
+}
+
 function checkPass() {
-    let input = document.getElementById("passwordInput").value;
-    if (input === ADMIN_PASSWORD) {
+    const val = document.getElementById("passwordInput").value;
+    if (val === ADMIN_PASSWORD) {
         document.getElementById("passwordPopup").style.display = "none";
         document.getElementById("adminPanel").style.display = "block";
+        // Immediately refresh UI so admin sees current state
+        updateLockState();
     } else {
         alert("Wrong password");
     }
 }
 
-// NEW PERMANENT TOGGLE
+// TOGGLE permanent allow ON/OFF
 function togglePermanent() {
-    const allowToggle = document.getElementById("allowToggle");
-
     if (isAllowed()) {
-        // turn OFF
-        localStorage.removeItem("whitelist_expire");
+        // If currently allowed either permanent or timed, toggling should remove the key (re-lock)
+        localStorage.removeItem(STORAGE_KEY);
+        updateLockState();
+        alert("Whitelist disabled. Site locked again.");
     } else {
-        // turn ON
-        localStorage.setItem("whitelist_expire", Date.now() + 365 * 24 * 60 * 60 * 1000);
+        // turn ON permanent
+        localStorage.setItem(STORAGE_KEY, "permanent");
+        updateLockState();
+        alert("Whitelist enabled permanently. Everyone can play.");
     }
-
-    updateLockState();
 }
 
-// PRESET TIME
+// preset minutes allow
 function allowPreset() {
-    let mins = parseInt(document.getElementById("presetTime").value);
-    let expire = Date.now() + mins * 60000;
-    localStorage.setItem("whitelist_expire", expire);
+    let mins = parseInt(document.getElementById("presetTime").value, 10);
+    if (!mins || mins <= 0) {
+        alert("Pick a valid preset.");
+        return;
+    }
+    let expire = Date.now() + mins * 60 * 1000;
+    localStorage.setItem(STORAGE_KEY, String(expire));
     updateLockState();
-    alert(`Everyone allowed for ${mins} minutes`);
+    alert(`Everyone allowed for ${mins} minutes.`);
 }
 
-// CUSTOM TIME
+// custom minutes allow
 function allowCustom() {
-    let m = parseInt(document.getElementById("customMinutes").value);
+    let m = parseInt(document.getElementById("customMinutes").value, 10);
     if (!m || m <= 0) return alert("Enter valid minutes");
-
-    let expire = Date.now() + m * 60000;
-    localStorage.setItem("whitelist_expire", expire);
+    let expire = Date.now() + m * 60 * 1000;
+    localStorage.setItem(STORAGE_KEY, String(expire));
     updateLockState();
-    alert(`Everyone allowed for ${m} minutes`);
+    alert(`Everyone allowed for ${m} minutes.`);
 }
 
+// close admin panel
 function closeAdmin() {
     document.getElementById("adminPanel").style.display = "none";
 }
@@ -227,5 +308,3 @@ function closeAdmin() {
 
 </body>
 </html>
-
-

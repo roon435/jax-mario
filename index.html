@@ -72,16 +72,16 @@
 </head>
 <body>
 
-<h1 id="lockedMessage">This site is locked. You need whitelist from cam to play mario. Whitelisted people, please enjoy the game :). Please note i did not make this mario game jax, my friend did i repeat jax  made this game (i made whitelist).</h1>
+<h1 id="lockedMessage">This site is locked. You need whitelist from cam to play mario. Ask him to whitelist you for a while. Whitelisted people, please enjoy the game :). Please note i did not make this mario game jax, my friend did i repeat jax  made this game (i made whitelist with ai).</h1>
 
 <!-- USER PLAY BUTTON -->
 <button id="playMarioBtn" onclick="openProxyGame()">
-    Play Mario
+    Play Mario ( enjoy :) )
 </button>
 
 <!-- PASSWORD POPUP -->
 <div id="passwordPopup">
-    <h3>Enter Admin Password</h3>
+    <h3>Enter Admin Password (NOT LEAKING TO ANYONE)</h3>
     <input id="passwordInput" type="password" placeholder="Password">
     <br>
     <button onclick="checkPass()">Submit</button>
@@ -155,7 +155,7 @@ function updateLockState() {
         allowToggle.classList.add("toggleOn");
 
     } else {
-        lockedMessage.innerText = "This site is locked. Press ; to enter password.";
+        lockedMessage.innerText = "This site is locked. You need whitelist from cam to play mario. Ask him to whitelist you for a while. Whitelisted people, please enjoy the game :). Please note i did not make this mario game jax, my friend did i repeat jax  made this game (i made whitelist with ai).";
         playMarioBtn.style.display = "none";
 
         allowToggle.innerText = "Allow Everyone: OFF";
@@ -227,4 +227,5 @@ function closeAdmin() {
 
 </body>
 </html>
+
 

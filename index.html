@@ -61,14 +61,21 @@
     .adminPlayBtn {
         background: red !important;
     }
+
+    .toggleOn {
+        background: green !important;
+    }
+    .toggleOff {
+        background: #4b78ff !important;
+    }
 </style>
 </head>
 <body>
 
 <h1 id="lockedMessage">This site is locked. Press ; to enter password.</h1>
 
-<!-- PLAY MARIO BUTTON FOR USERS -->
-<button id="playMarioBtn" onclick="window.location.href='https://pastefy.app/oPIf5G2V'">
+<!-- USER PLAY BUTTON -->
+<button id="playMarioBtn" onclick="openProxyGame()">
     Play Mario
 </button>
 
@@ -84,14 +91,17 @@
 <div id="adminPanel">
     <h2>Admin Panel</h2>
 
-    <!-- NEW ADMIN PLAY BUTTON -->
-    <button class="adminPlayBtn" onclick="window.location.href='https://pastefy.app/oPIf5G2V'">
+    <!-- ADMIN PLAY BUTTON -->
+    <button class="adminPlayBtn" onclick="openProxyGame()">
         Play Mario (Admin)
     </button>
 
     <h3 style="margin-top: 20px;">Whitelist Control</h3>
 
-    <button onclick="unlockForEveryone()">Allow Everyone (Permanent)</button>
+    <!-- NEW TOGGLE BUTTON -->
+    <button id="allowToggle" class="toggleOff" onclick="togglePermanent()">
+        Allow Everyone: OFF
+    </button>
 
     <h3 style="margin-top: 15px;">Timed Access</h3>
     <select id="presetTime">
@@ -114,31 +124,49 @@
 <script>
 // PASSWORD
 const ADMIN_PASSWORD = "roongoon678";
+const GAME_URL = "https://fr-mario.vercel.app";
 
-// Check if whitelist active
+// PROXY WINDOW FUNCTION
+function openProxyGame() {
+    let win = window.open("about:blank", "_blank");
+    win.document.write(`<iframe src="${GAME_URL}" style="border:0; width:100vw; height:100vh;"></iframe>`);
+    win.document.close();
+}
+
+// CHECK WHITELIST STATUS
 function isAllowed() {
     let expire = localStorage.getItem("whitelist_expire");
     if (!expire) return false;
     return Date.now() < parseInt(expire);
 }
 
-// Update UI based on whitelist
+// UPDATE UI
 function updateLockState() {
     const lockedMessage = document.getElementById("lockedMessage");
     const playMarioBtn = document.getElementById("playMarioBtn");
+    const allowToggle = document.getElementById("allowToggle");
 
     if (isAllowed()) {
         lockedMessage.innerText = "Site Unlocked!";
         playMarioBtn.style.display = "inline-block";
+
+        allowToggle.innerText = "Allow Everyone: ON";
+        allowToggle.classList.remove("toggleOff");
+        allowToggle.classList.add("toggleOn");
+
     } else {
         lockedMessage.innerText = "This site is locked. Press ; to enter password.";
         playMarioBtn.style.display = "none";
+
+        allowToggle.innerText = "Allow Everyone: OFF";
+        allowToggle.classList.remove("toggleOn");
+        allowToggle.classList.add("toggleOff");
     }
 }
 
 updateLockState();
 
-// Show password popup on ;
+// SHOW PASSWORD POPUP
 document.addEventListener("keydown", e => {
     if (e.key === ";") {
         document.getElementById("passwordPopup").style.display = "block";
@@ -146,7 +174,7 @@ document.addEventListener("keydown", e => {
     }
 });
 
-// Check password
+// CHECK PASSWORD
 function checkPass() {
     let input = document.getElementById("passwordInput").value;
     if (input === ADMIN_PASSWORD) {
@@ -157,14 +185,22 @@ function checkPass() {
     }
 }
 
-// Permanent unlock
-function unlockForEveryone() {
-    localStorage.setItem("whitelist_expire", Date.now() + 365 * 24 * 60 * 60 * 1000);
+// NEW PERMANENT TOGGLE
+function togglePermanent() {
+    const allowToggle = document.getElementById("allowToggle");
+
+    if (isAllowed()) {
+        // turn OFF
+        localStorage.removeItem("whitelist_expire");
+    } else {
+        // turn ON
+        localStorage.setItem("whitelist_expire", Date.now() + 365 * 24 * 60 * 60 * 1000);
+    }
+
     updateLockState();
-    alert("Everyone can now access permanently.");
 }
 
-// Preset time unlock
+// PRESET TIME
 function allowPreset() {
     let mins = parseInt(document.getElementById("presetTime").value);
     let expire = Date.now() + mins * 60000;
@@ -173,7 +209,7 @@ function allowPreset() {
     alert(`Everyone allowed for ${mins} minutes`);
 }
 
-// Custom minutes unlock
+// CUSTOM TIME
 function allowCustom() {
     let m = parseInt(document.getElementById("customMinutes").value);
     if (!m || m <= 0) return alert("Enter valid minutes");
@@ -184,7 +220,6 @@ function allowCustom() {
     alert(`Everyone allowed for ${m} minutes`);
 }
 
-// Close admin panel
 function closeAdmin() {
     document.getElementById("adminPanel").style.display = "none";
 }

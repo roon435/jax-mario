@@ -40,7 +40,6 @@
         color: white;
         cursor: pointer;
     }
-
     button:hover {
         background: #3256c7;
     }
@@ -55,9 +54,12 @@
         border-radius: 10px;
         cursor: pointer;
     }
-
     #playMarioBtn:hover {
         background: darkred;
+    }
+
+    .adminPlayBtn {
+        background: red !important;
     }
 </style>
 </head>
@@ -65,7 +67,7 @@
 
 <h1 id="lockedMessage">This site is locked. Press ; to enter password.</h1>
 
-<!-- PLAY MARIO BUTTON -->
+<!-- PLAY MARIO BUTTON FOR USERS -->
 <button id="playMarioBtn" onclick="window.location.href='https://pastefy.app/oPIf5G2V'">
     Play Mario
 </button>
@@ -81,6 +83,13 @@
 <!-- ADMIN PANEL -->
 <div id="adminPanel">
     <h2>Admin Panel</h2>
+
+    <!-- NEW ADMIN PLAY BUTTON -->
+    <button class="adminPlayBtn" onclick="window.location.href='https://pastefy.app/oPIf5G2V'">
+        Play Mario (Admin)
+    </button>
+
+    <h3 style="margin-top: 20px;">Whitelist Control</h3>
 
     <button onclick="unlockForEveryone()">Allow Everyone (Permanent)</button>
 
@@ -129,7 +138,7 @@ function updateLockState() {
 
 updateLockState();
 
-// Show password popup when pressing ;
+// Show password popup on ;
 document.addEventListener("keydown", e => {
     if (e.key === ";") {
         document.getElementById("passwordPopup").style.display = "block";
@@ -155,7 +164,7 @@ function unlockForEveryone() {
     alert("Everyone can now access permanently.");
 }
 
-// Allow preset times
+// Preset time unlock
 function allowPreset() {
     let mins = parseInt(document.getElementById("presetTime").value);
     let expire = Date.now() + mins * 60000;
@@ -164,7 +173,7 @@ function allowPreset() {
     alert(`Everyone allowed for ${mins} minutes`);
 }
 
-// Custom minutes
+// Custom minutes unlock
 function allowCustom() {
     let m = parseInt(document.getElementById("customMinutes").value);
     if (!m || m <= 0) return alert("Enter valid minutes");

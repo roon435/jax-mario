@@ -3,73 +3,46 @@
 <head>
 <title>Mario Whitelist</title>
 <style>
-body { background:#111; color:white; font-family:Arial; text-align:center; margin-top:100px; }
-#adminLogin, #panel { display:none; }
-button { padding:10px 20px; margin-top:10px; cursor:pointer; }
-a { color: orange; text-decoration:none; font-weight:bold; }
+body { background:#111; color:white; font-family:Arial; text-align:center; padding:100px; }
+button { padding:15px 30px; font-size:16px; cursor:pointer; margin-top:30px; }
 </style>
 </head>
 <body>
 
-<h1 id="status">This site is locked.</h1>
-<p id="msg">You need whitelist from Cam to play Mario. Ask him to whitelist you.</p>
+<h1>This site is locked.</h1>
+<p>You need whitelist from Cam to play Mario. Ask him to whitelist you for a while.</p>
+<p>Whitelisted people, please enjoy the game :).<br>
+Please note I did not make this Mario game — <b>Jax</b> made this game (I made whitelist with AI).</p>
 
-<!-- Admin login -->
-<div id="adminLogin">
-    <input type="password" id="pw" placeholder="Password">
-    <button onclick="checkPass()">Login</button>
-</div>
-
-<!-- Admin panel -->
-<div id="panel">
-    <h2>Admin Panel</h2>
-    <button onclick="unlock()">Unlock Site for Yourself</button>
-    <button onclick="lock()">Lock Site</button>
-</div>
-
-<!-- Play Mario button (works for everyone) -->
-<br>
-<a href="https://fr-mario.vercel.app" target="_blank"><button>Play Mario</button></a>
+<button id="playBtn">Play Mario</button>
 
 <script>
-// Press ; to show admin login
-document.addEventListener("keydown", e => {
-    if(e.key === ";") {
-        document.getElementById("adminLogin").style.display = "block";
+document.getElementById('playBtn').addEventListener('click', () => {
+    let pass = prompt("Enter password to unlock:");
+    if(pass === "roongoon678") {
+        // Open Mario in about:blank
+        let win = window.open("about:blank", "_blank");
+        if(win) {
+            win.location.href = "https://fr-mario.vercel.app";
+
+            // Close window after 5s of inactivity
+            let timer;
+            const resetTimer = () => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    win.close();
+                }, 5000); // 5 seconds
+            };
+
+            // Reset timer on any activity
+            win.addEventListener("mousemove", resetTimer);
+            win.addEventListener("keydown", resetTimer);
+            resetTimer(); // start timer
+        }
+    } else {
+        alert("Incorrect password!");
     }
 });
-
-// Check admin password
-function checkPass() {
-    let p = document.getElementById("pw").value;
-    if(p === "roongoon678") {
-        document.getElementById("panel").style.display = "block";
-        document.getElementById("adminLogin").style.display = "none";
-    } else {
-        alert("Wrong password!");
-    }
-}
-
-// Unlock/lock for you locally
-function unlock() {
-    localStorage.setItem("access","unlocked");
-    document.getElementById("status").style.display = "none";
-    document.getElementById("msg").style.display = "none";
-    alert("Site unlocked for you! You can now see the Play Mario button.");
-}
-
-function lock() {
-    localStorage.setItem("access","locked");
-    document.getElementById("status").style.display = "block";
-    document.getElementById("msg").style.display = "block";
-    alert("Site locked again.");
-}
-
-// On page load, check if unlocked for you
-if(localStorage.getItem("access") === "unlocked") {
-    document.getElementById("status").style.display = "none";
-    document.getElementById("msg").style.display = "none";
-}
 </script>
 
 </body>

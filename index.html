@@ -6,20 +6,23 @@
 </head>
 <body style="background:#111; color:white; text-align:center; padding-top:100px; font-family:Arial;">
 
-   <a href="index.html" style="position:absolute; top:15px; left:15px;">
-    <img src="BaixosRootingDen.png" 
-         alt="Home" 
-         style="width:85px; height:auto; cursor:pointer;">
-</a>
-
+    <!-- top-left logo -->
+    <a href="index.html" style="position:absolute; top:15px; left:15px;">
+        <img src="BaixosRootingDen.png" 
+             alt="Home" 
+             style="width:85px; height:auto; cursor:pointer;">
+    </a>
 
     <h1 style="font-size:40px;">Baixo's Rooting Den</h1>
+    <p style="opacity:0.7;">Press <b>]</b> to open Mario</p>
 
-    <button 
-        onclick="window.location.href='mario.html'"
-        style="padding:15px 30px; font-size:20px; cursor:pointer; border-radius:10px;">
-        Open Mario
-    </button>
+    <script>
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "]") {
+            window.location.href = "mario.html";
+        }
+    });
+    </script>
 
 </body>
 </html>

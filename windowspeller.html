@@ -29,9 +29,9 @@ function spawnWin(x, y) {
 }
 
 function spellHi() {
-    let startX = 200;   // H starting X
-    let startY = 200;   // H starting Y
-    let letterGap = 450; // gap between H and I
+    let startX = 200;    // H start
+    let startY = 200;    // H start
+    let letterGap = 600; // << moved I more right
 
     // ——— H ———
     // Left column
@@ -47,16 +47,11 @@ function spellHi() {
     spawnWin(startX + 340, startY + 150);
     spawnWin(startX + 340, startY + 300);
 
-    // ——— I ——— (fixed alignment)
+    // ——— I ——— (now correctly spaced)
     let ix = startX + letterGap;
 
-    // top
     spawnWin(ix, startY);
-
-    // middle
     spawnWin(ix, startY + 150);
-
-    // bottom
     spawnWin(ix, startY + 300);
 }
 </script>

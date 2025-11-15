@@ -1,55 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Mario Whitelist</title>
-<style>
-body {
-    background: #111;
-    color: white;
-    font-family: Arial;
-    text-align: center;
-    padding: 100px;
-}
-input, button {
-    padding: 10px;
-    font-size: 16px;
-    margin-top: 10px;
-}
-</style>
+    <title>Locked Site</title>
+    <style>
+        body {
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 60px;
+        }
+        #passwordBox {
+            display: none;
+            margin-top: 20px;
+        }
+        input {
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4a4aff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #3333ff;
+        }
+    </style>
 </head>
 <body>
 
-<h1>This site is locked.</h1>
-<p>You need whitelist from Cam to play Mario. Ask him to whitelist you for a while.</p>
-<p>Whitelisted people, please enjoy the game :).<br>
-Please note I did not make this Mario game — <b>Jax</b> made this game (I made whitelist with AI).</p>
+    <h1>This site is locked.</h1>
+    <p>You need whitelist from Cam to play Mario. Ask him to whitelist you for a while.</p>
+    <p>Whitelisted people, please enjoy the game :).<br>
+    Please note I did not make this Mario game — Jax made this game (I made whitelist with AI).</p>
 
-<div id="password-container">
-    <input type="password" id="password" placeholder="Enter password">
     <button id="playBtn">Play Mario</button>
-</div>
 
-<script>
-let marioWindow;
+    <div id="passwordBox">
+        <p>Enter password:</p>
+        <input type="password" id="pwdInput" placeholder="Password">
+        <br>
+        <button onclick="submitPassword()">Submit</button>
+    </div>
 
-document.getElementById('playBtn').addEventListener('click', () => {
-    const pw = document.getElementById('password').value;
-    if(pw === "roongoon678") {
-        // Open Mario in about:blank
-        marioWindow = window.open("about:blank", "_blank");
-        if(marioWindow) {
-            marioWindow.location.href = "https://fr-mario.vercel.app";
+    <script>
+        const correctPassword = "roongoon678";
+        let popupWindow = null;
 
-            // Close after 15 minutes
+        document.getElementById("playBtn").onclick = function () {
+            document.getElementById("passwordBox").style.display = "block";
+        };
+
+        function submitPassword() {
+            const entered = document.getElementById("pwdInput").value;
+
+            if (entered !== correctPassword) {
+                alert("Wrong password.");
+                return;
+            }
+
+            // Open about:blank proxy window
+            popupWindow = window.open("about:blank", "_blank");
+
+            // Create iframe inside the about:blank window
+            popupWindow.document.write(`
+                <iframe src="https://baixrio.amango.org" style="border:none;width:100%;height:100vh;"></iframe>
+            `);
+
+            // Auto-close after 5 seconds
             setTimeout(() => {
-                if(marioWindow && !marioWindow.closed) marioWindow.close();
-            }, 15 * 60 * 1000); // 15 minutes
+                if (popupWindow && !popupWindow.closed) {
+                    popupWindow.close();
+                }
+            }, 5000);
         }
-    } else {
-        alert("Incorrect password!");
-    }
-});
-</script>
+    </script>
 
 </body>
 </html>

@@ -22,24 +22,30 @@
     </button>
 
 <script>
-// opens a blank popup window at a specific location
+// Open a blank popup window at a defined position with black background
 function spawnWin(x, y) {
-    window.open("about:blank", "_blank",
+    let w = window.open("about:blank", "_blank",
         "width=160,height=120,left=" + x + ",top=" + y);
+
+    // Give the popup a black background
+    w.document.write(`
+        <body style="background:black; margin:0;"></body>
+    `);
 }
 
+// Spell "HI" using popup windows
 function spellHi() {
-    let startX = 200;    // H start
-    let startY = 200;    // H start
-    let letterGap = 650; // moved I slightly more right
+    let startX = 200;    // Starting X for "H"
+    let startY = 200;    // Starting Y for both letters
+    let letterGap = 650; // Distance between H and I
 
-    // ——— H ———
+    // ===== H =====
     // Left column
     spawnWin(startX, startY);
     spawnWin(startX, startY + 150);
     spawnWin(startX, startY + 300);
 
-    // Middle bar
+    // Middle connector
     spawnWin(startX + 170, startY + 150);
 
     // Right column
@@ -47,12 +53,12 @@ function spellHi() {
     spawnWin(startX + 340, startY + 150);
     spawnWin(startX + 340, startY + 300);
 
-    // ——— I ———
+    // ===== I =====
     let ix = startX + letterGap;
 
-    spawnWin(ix, startY);
-    spawnWin(ix, startY + 150);
-    spawnWin(ix, startY + 300);
+    spawnWin(ix, startY);         // top
+    spawnWin(ix, startY + 150);   // middle
+    spawnWin(ix, startY + 300);   // bottom
 }
 </script>
 

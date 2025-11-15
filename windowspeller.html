@@ -170,6 +170,36 @@ function spellHi() {
     spawnWin(ix, startY + 300);
 }
 </script>
+<button id="winToggle" style="position:fixed; top:10px; left:10px; z-index:9999;">
+    Window Spawn: OFF
+</button>
+
+<script>
+let spawnMode = false;
+
+document.getElementById("winToggle").onclick = () => {
+    spawnMode = !spawnMode;
+    document.getElementById("winToggle").innerText = spawnMode ? "Window Spawn: ON" : "Window Spawn: OFF";
+};
+
+document.addEventListener("click", (e) => {
+    if (!spawnMode) return;
+    if (e.target.id === "winToggle") return;
+
+    // get click location
+    let x = e.screenX;
+    let y = e.screenY;
+
+    // open window
+    let newWin = window.open("about:blank", "_blank",
+        `width=150,height=150,left=${x},top=${y}`);
+
+    if (newWin) {
+        newWin.document.body.style.background = "black";
+        newWin.document.title = " ";
+    }
+});
+</script>
 
 
 </body>

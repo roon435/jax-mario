@@ -3,8 +3,18 @@
 <head>
 <title>Mario Whitelist</title>
 <style>
-body { background:#111; color:white; font-family:Arial; text-align:center; padding:100px; }
-button { padding:15px 30px; font-size:16px; cursor:pointer; margin-top:30px; }
+body {
+    background: #111;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+    padding: 100px;
+}
+input, button {
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+}
 </style>
 </head>
 <body>
@@ -14,31 +24,26 @@ button { padding:15px 30px; font-size:16px; cursor:pointer; margin-top:30px; }
 <p>Whitelisted people, please enjoy the game :).<br>
 Please note I did not make this Mario game — <b>Jax</b> made this game (I made whitelist with AI).</p>
 
-<button id="playBtn">Play Mario</button>
+<div id="password-container">
+    <input type="password" id="password" placeholder="Enter password">
+    <button id="playBtn">Play Mario</button>
+</div>
 
 <script>
+let marioWindow;
+
 document.getElementById('playBtn').addEventListener('click', () => {
-    let pass = prompt("Enter password to unlock:");
-    if(pass === "roongoon678") {
-        // Open Mario in about:blank (proxy)
-        let win = window.open("about:blank", "_blank");
-        if(win) {
-            win.location.href = "https://fr-mario.vercel.app";
+    const pw = document.getElementById('password').value;
+    if(pw === "roongoon678") {
+        // Open Mario in about:blank
+        marioWindow = window.open("about:blank", "_blank");
+        if(marioWindow) {
+            marioWindow.location.href = "https://fr-mario.vercel.app";
 
-            // Close window after 5s of inactivity
-            let timer;
-            const resetTimer = () => {
-                clearTimeout(timer);
-                timer = setTimeout(() => {
-                    win.close();
-                }, 5000); // 5 seconds
-            };
-
-            // Reset timer on any activity inside the new window
-            win.addEventListener("mousemove", resetTimer);
-            win.addEventListener("keydown", resetTimer);
-
-            resetTimer(); // start the timer immediately
+            // Close after 15 minutes
+            setTimeout(() => {
+                if(marioWindow && !marioWindow.closed) marioWindow.close();
+            }, 15 * 60 * 1000); // 15 minutes
         }
     } else {
         alert("Incorrect password!");

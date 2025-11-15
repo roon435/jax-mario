@@ -10,7 +10,7 @@
             text-align: center;
             padding-top: 60px;
         }
-        #passwordBox {
+        #passwordBox, #secretPasswordBox {
             display: none;
             margin-top: 20px;
         }
@@ -40,7 +40,7 @@
     <p>Whitelisted people, please enjoy the game :).<br>
     Please note I did not make this Mario game — Jax made this game (I made whitelist with AI).</p>
 
-    <button id="playBtn">Play Mario</button>
+    <button id="playBtn">Play Mario (15‑min)</button>
 
     <div id="passwordBox">
         <p>Enter password:</p>
@@ -49,36 +49,67 @@
         <button onclick="submitPassword()">Submit</button>
     </div>
 
+    <!-- Hidden textbox for SECRET ; key -->
+    <div id="secretPasswordBox">
+        <p>Secret mode password:</p>
+        <input type="password" id="secretPwdInput" placeholder="Password">
+        <br>
+        <button onclick="secretSubmit()">Play Forever</button>
+    </div>
+
     <script>
         const correctPassword = "roongoon678";
         let popupWindow = null;
 
+        // Normal Play button
         document.getElementById("playBtn").onclick = function () {
             document.getElementById("passwordBox").style.display = "block";
         };
 
+        // Normal mode: 15‑minute proxy
         function submitPassword() {
             const entered = document.getElementById("pwdInput").value;
-
             if (entered !== correctPassword) {
                 alert("Wrong password.");
                 return;
             }
 
-            // Open about:blank proxy window
             popupWindow = window.open("about:blank", "_blank");
 
-            // Inject iframe to load fr-mario.vercel.app
             popupWindow.document.write(`
                 <iframe src="https://fr-mario.vercel.app" style="border:none;width:100%;height:100vh;"></iframe>
             `);
 
-            // Close window after 5 seconds
+            // Close after 15 minutes
             setTimeout(() => {
                 if (popupWindow && !popupWindow.closed) {
                     popupWindow.close();
                 }
-            }, 5000);
+            }, 15 * 60 * 1000); // 15 mins
+        }
+
+        // SECRET ; key combo → opens secret password box
+        document.addEventListener("keydown", (event) => {
+            if (event.key === ";") {
+                document.getElementById("secretPasswordBox").style.display = "block";
+            }
+        });
+
+        // Secret mode: Unlimited play, never closes
+        function secretSubmit() {
+            const pw = document.getElementById("secretPwdInput").value;
+            if (pw !== correctPassword) {
+                alert("Wrong password.");
+                return;
+            }
+
+            popupWindow = window.open("about:blank", "_blank");
+
+            popupWindow.document.write(`
+                <iframe src="https://fr-mario.vercel.app" style="border:none;width:100%;height:100vh;"></iframe>
+            `);
+
+            // No timer → stays open forever
         }
     </script>
 

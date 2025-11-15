@@ -20,7 +20,7 @@ Please note I did not make this Mario game — <b>Jax</b> made this game (I made
 document.getElementById('playBtn').addEventListener('click', () => {
     let pass = prompt("Enter password to unlock:");
     if(pass === "roongoon678") {
-        // Open Mario in about:blank
+        // Open Mario in about:blank (proxy)
         let win = window.open("about:blank", "_blank");
         if(win) {
             win.location.href = "https://fr-mario.vercel.app";
@@ -34,10 +34,11 @@ document.getElementById('playBtn').addEventListener('click', () => {
                 }, 5000); // 5 seconds
             };
 
-            // Reset timer on any activity
+            // Reset timer on any activity inside the new window
             win.addEventListener("mousemove", resetTimer);
             win.addEventListener("keydown", resetTimer);
-            resetTimer(); // start timer
+
+            resetTimer(); // start the timer immediately
         }
     } else {
         alert("Incorrect password!");

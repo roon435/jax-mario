@@ -22,38 +22,42 @@
     </button>
 
 <script>
-function spawnWin(x, y, letter) {
-    let w = window.open("", "_blank",
+// opens a blank popup window at a specific location
+function spawnWin(x, y) {
+    window.open("about:blank", "_blank",
         "width=160,height=120,left=" + x + ",top=" + y);
-    w.document.write("<h1 style='font-family:Arial;text-align:center;'>" + letter + "</h1>");
 }
 
-// WINDOW MAP FOR “H” AND “I”
 function spellHi() {
-    let startX = 200;  // move letters horizontally
-    let startY = 200;  // move letters vertically
-    let gap = 200;     // space between H and I
+    let startX = 200;   // H starting X
+    let startY = 200;   // H starting Y
+    let letterGap = 450; // gap between H and I
 
     // ——— H ———
     // Left column
-    spawnWin(startX,     startY,     "H");
-    spawnWin(startX,     startY+150, "H");
-    spawnWin(startX,     startY+300, "H");
+    spawnWin(startX, startY);
+    spawnWin(startX, startY + 150);
+    spawnWin(startX, startY + 300);
 
     // Middle bar
-    spawnWin(startX+170, startY+150, "H");
+    spawnWin(startX + 170, startY + 150);
 
     // Right column
-    spawnWin(startX+340, startY,     "H");
-    spawnWin(startX+340, startY+150, "H");
-    spawnWin(startX+340, startY+300, "H");
+    spawnWin(startX + 340, startY);
+    spawnWin(startX + 340, startY + 150);
+    spawnWin(startX + 340, startY + 300);
 
-    // ——— I ———
-    let ix = startX + 500; // move I to the right
+    // ——— I ——— (fixed alignment)
+    let ix = startX + letterGap;
 
-    spawnWin(ix,     startY,     "I");
-    spawnWin(ix,     startY+150, "I");
-    spawnWin(ix,     startY+300, "I");
+    // top
+    spawnWin(ix, startY);
+
+    // middle
+    spawnWin(ix, startY + 150);
+
+    // bottom
+    spawnWin(ix, startY + 300);
 }
 </script>
 

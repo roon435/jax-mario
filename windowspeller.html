@@ -21,17 +21,41 @@
         Spell Hi
     </button>
 
-    <script>
-    function spellHi() {
-        // Window for H
-        let w1 = window.open("", "_blank", "width=300,height=200");
-        w1.document.write("<h1 style='font-family:Arial; text-align:center;'>H</h1>");
+<script>
+function spawnWin(x, y, letter) {
+    let w = window.open("", "_blank",
+        "width=160,height=120,left=" + x + ",top=" + y);
+    w.document.write("<h1 style='font-family:Arial;text-align:center;'>" + letter + "</h1>");
+}
 
-        // Window for I
-        let w2 = window.open("", "_blank", "width=300,height=200");
-        w2.document.write("<h1 style='font-family:Arial; text-align:center;'>I</h1>");
-    }
-    </script>
+// WINDOW MAP FOR “H” AND “I”
+function spellHi() {
+    let startX = 200;  // move letters horizontally
+    let startY = 200;  // move letters vertically
+    let gap = 200;     // space between H and I
+
+    // ——— H ———
+    // Left column
+    spawnWin(startX,     startY,     "H");
+    spawnWin(startX,     startY+150, "H");
+    spawnWin(startX,     startY+300, "H");
+
+    // Middle bar
+    spawnWin(startX+170, startY+150, "H");
+
+    // Right column
+    spawnWin(startX+340, startY,     "H");
+    spawnWin(startX+340, startY+150, "H");
+    spawnWin(startX+340, startY+300, "H");
+
+    // ——— I ———
+    let ix = startX + 500; // move I to the right
+
+    spawnWin(ix,     startY,     "I");
+    spawnWin(ix,     startY+150, "I");
+    spawnWin(ix,     startY+300, "I");
+}
+</script>
 
 </body>
 </html>
